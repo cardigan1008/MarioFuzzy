@@ -68,6 +68,8 @@ def play_game(operation_list):
             actions.press_s_key()
         elif i == "d":
             actions.press_down_key()
+
+    time.sleep(3)
     pygame_process.terminate()
 
 
