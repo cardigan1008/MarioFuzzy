@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import os
 import subprocess
 import os
 import yaml
@@ -38,22 +39,24 @@ class KeyboardActions:
         self.keyboard.press(Key.down)
         time.sleep(self.time_interval)
         self.keyboard.release(Key.down)
+
     def press_enter_key(self):
         self.keyboard.press(Key.enter)
         time.sleep(self.time_interval)
         self.keyboard.release(Key.enter)
 
+
 def play_game(operation_list):
     # 打开 YAML 文件
-    with open("config.yaml", "r") as file:
+    with open("action/config.yaml", "r") as file:
         # 使用 PyYAML 加载 YAML 文件的内容
         yaml_data = yaml.safe_load(file)
     game_path = yaml_data["game_path"]
 
     os.chdir(game_path)
 
-    pygame_process = subprocess.Popen(['python', game_path+'/mario_level_1.py'])
 
+    pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
     actions = KeyboardActions()
 
     time.sleep(1)
@@ -71,6 +74,7 @@ def play_game(operation_list):
             actions.press_s_key()
         elif i == "d":
             actions.press_down_key()
+
         # 获取屏幕尺寸
         screen_width, screen_height = pyautogui.size()
         # 截取整个屏幕图像
@@ -78,7 +82,11 @@ def play_game(operation_list):
         # 保存截图
         screenshot.save("screenshot.png")
 
+
+    time.sleep(3)
+
     pygame_process.terminate()
+
 
 if __name__ == "__main__":
     time.sleep(1)

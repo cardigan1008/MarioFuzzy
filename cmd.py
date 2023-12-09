@@ -1,7 +1,6 @@
 import argparse
 import logging
 from action import fuzz
-from action import transform
 
 
 def transform_cmd(args):
