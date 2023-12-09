@@ -5,6 +5,7 @@ import random
 from action import transform
 from action import run
 
+
 def read_file_content(file_path):
     try:
         with open(file_path, 'r') as file:
@@ -29,8 +30,6 @@ class Fuzz:
 
         transform_action = transform.Transform(operation_list)
         output_data = transform_action.transform()
-
-        logging.info(f"Transformed data: {output_data}")
 
         # 保存 output_data 到新文件
         self.save_output_data(output_data)
