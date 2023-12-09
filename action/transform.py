@@ -18,7 +18,11 @@ class Transform:
     def __init__(self, input_data):
         self.input_data = input_data
 
-    def transform(self, transform_kind):
+    def transform(self):
+        action_kind = random.choice(list(TransformKind))
+        return self.take_action(action_kind)
+
+    def take_action(self, transform_kind):
         if transform_kind == TransformKind.CHAR_FLIP:
             return self.char_flip()
         elif transform_kind == TransformKind.CHAR_INS:
@@ -60,7 +64,7 @@ class Transform:
         logging.info(f"Running transform havoc with input_data: {self.input_data}")
         for _ in range(num_transforms):
             transform_kind = random.choice([TransformKind.CHAR_FLIP, TransformKind.CHAR_INS, TransformKind.CHAR_DEL])
-            self.transform(transform_kind)
+            self.take_action(transform_kind)
         return self.input_data
 
     def splice(self):
