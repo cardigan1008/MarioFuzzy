@@ -1,0 +1,42 @@
+# Virtual environment
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Output of coverage tools
+htmlcov/
+
+# PyCharm files
+.idea/
+
+# Environments
+.env/
+# Virtual environment
+venv/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Output of coverage tools
+htmlcov/
+
+# PyCharm files
+.idea/
+
+# Environments
+.env/
