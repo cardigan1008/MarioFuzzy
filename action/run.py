@@ -1,9 +1,12 @@
-import os
-import string
+import cv2
+import numpy as np
 import subprocess
+import os
 import yaml
-from pynput.keyboard import Key, Controller
 import time
+import pyautogui
+
+from pynput.keyboard import Key, Controller
 
 
 class KeyboardActions:
@@ -50,12 +53,13 @@ def play_game(operation_list):
     os.chdir(game_path)
 
     pygame_process = subprocess.Popen(['python', game_path+'/mario_level_1.py'])
+
     actions = KeyboardActions()
 
     time.sleep(1)
     actions.press_enter_key()
     time.sleep(5)
-
+    counter = 0
     for i in operation_list:
         if i == "l":
             actions.press_left_key()
@@ -67,6 +71,13 @@ def play_game(operation_list):
             actions.press_s_key()
         elif i == "d":
             actions.press_down_key()
+        # 获取屏幕尺寸
+        screen_width, screen_height = pyautogui.size()
+        # 截取整个屏幕图像
+        screenshot = pyautogui.screenshot()
+        # 保存截图
+        screenshot.save("screenshot.png")
+
     pygame_process.terminate()
 
 if __name__ == "__main__":
