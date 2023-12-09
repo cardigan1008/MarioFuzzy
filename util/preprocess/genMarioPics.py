@@ -2,8 +2,7 @@ import os
 
 import pygame as pg
 import constants as c
-import tools, setup
-
+import setup, tools
 save_path = "./MarioPics"
 
 
@@ -338,9 +337,13 @@ def main():
     mario_sprites = MarioSprites()
 
     # 保存所有图片
-    save_images(mario_sprites.right_frames, "mario", "right_small_normal")
-    save_images(mario_sprites.left_frames, "mario", "left_small_normal")
-    # 添加其他状态的保存...
+    save_images(mario_sprites.right_frames, "./mario/small_normal", "right_small_normal")
+    save_images(mario_sprites.left_frames, "./mario/small_normal", "left_small_normal")
+
+    save_images(mario_sprites.left_big_normal_frames, "./mario/big_normal", "left_big_normal")
+    save_images(mario_sprites.right_big_normal_frames,"./mario/big_normal", "right_big_normal")
+
+    save_images(mario_sprites.right_fire_frames, "./mario/big_fire", "right_big_fire")
 
 
 if __name__ == "__main__":
