@@ -21,10 +21,10 @@ class Fuzz:
         self.crash_path = crash_path
 
     def run(self):
-        logging.info(f"Begin to fuzz with target_path: {self.target_path}, crash_path: {self.crash_path}")
-
         file_list = self.get_file_list()
         cur_seed = random.choice(file_list)  # TODO: implement selection
+
+        logging.info(f"Begin to fuzz with seed: {cur_seed}")
         operation_list = read_file_content(self.target_path + cur_seed)
 
         transform_action = transform.Transform(operation_list)
