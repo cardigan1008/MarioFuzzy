@@ -44,7 +44,7 @@ class Transform:
         logging.info(f"Running transform char insert with input_data: {self.input_data}")
         for _ in range(n):
             position = random.randint(0, len(self.input_data))
-            chars_to_insert = ''.join(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ') for _ in range(K))
+            chars_to_insert = ''.join(random.choice('aslrd') for _ in range(K))
             self.input_data = self.input_data[:position] + chars_to_insert + self.input_data[position:]
         return self.input_data
 
