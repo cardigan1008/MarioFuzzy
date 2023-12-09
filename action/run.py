@@ -1,5 +1,7 @@
+import os
 import string
-
+import subprocess
+import yaml
 from pynput.keyboard import Key, Controller
 import time
 
@@ -33,10 +35,27 @@ class KeyboardActions:
         self.keyboard.press(Key.down)
         time.sleep(self.time_interval)
         self.keyboard.release(Key.down)
-
+    def press_enter_key(self):
+        self.keyboard.press(Key.enter)
+        time.sleep(self.time_interval)
+        self.keyboard.release(Key.enter)
 
 def play_game(operation_list):
+    # 打开 YAML 文件
+    with open("config.yaml", "r") as file:
+        # 使用 PyYAML 加载 YAML 文件的内容
+        yaml_data = yaml.safe_load(file)
+    game_path = yaml_data["game_path"]
+
+    os.chdir(game_path)
+
+    pygame_process = subprocess.Popen(['python', game_path+'/mario_level_1.py'])
     actions = KeyboardActions()
+
+    time.sleep(1)
+    actions.press_enter_key()
+    time.sleep(5)
+
     for i in operation_list:
         if i == "l":
             actions.press_left_key()
@@ -48,7 +67,7 @@ def play_game(operation_list):
             actions.press_s_key()
         elif i == "d":
             actions.press_down_key()
-
+    pygame_process.terminate()
 
 if __name__ == "__main__":
     time.sleep(1)
