@@ -3,7 +3,7 @@ import os
 import random
 
 from action import transform
-
+from action import run
 
 def read_file_content(file_path):
     try:
@@ -34,6 +34,9 @@ class Fuzz:
 
         # 保存 output_data 到新文件
         self.save_output_data(output_data)
+
+        # 运行游戏
+        run.play_game(output_data)
 
     def save_output_data(self, data):
         # 获取当前输出文件的序号，如 seed1.txt、seed2.txt 等

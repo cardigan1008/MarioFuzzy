@@ -34,9 +34,10 @@ class KeyboardActions:
         time.sleep(self.time_interval)
         self.keyboard.release(Key.down)
 
-def play_game(str:string):
+
+def play_game(operation_list):
     actions = KeyboardActions()
-    for i in str:
+    for i in operation_list:
         if i == "l":
             actions.press_left_key()
         elif i == "r":
@@ -47,6 +48,7 @@ def play_game(str:string):
             actions.press_s_key()
         elif i == "d":
             actions.press_down_key()
+
 
 if __name__ == "__main__":
     time.sleep(1)
