@@ -6,6 +6,7 @@ import os
 import yaml
 import time
 import pyautogui
+import pygetwindow
 
 from pynput.keyboard import Key, Controller
 
@@ -55,7 +56,6 @@ def play_game(operation_list):
 
     os.chdir(game_path)
 
-
     pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
     actions = KeyboardActions()
 
@@ -63,6 +63,10 @@ def play_game(operation_list):
     actions.press_enter_key()
     time.sleep(5)
     counter = 0
+
+    # 获取 Pygame 窗口句柄
+    pygame_window = pygetwindow.getWindowsWithTitle("Super Mario Bros 1-1")[0]
+
     for i in operation_list:
         if i == "l":
             actions.press_left_key()
@@ -75,13 +79,15 @@ def play_game(operation_list):
         elif i == "d":
             actions.press_down_key()
 
-        # 获取屏幕尺寸
-        screen_width, screen_height = pyautogui.size()
-        # 截取整个屏幕图像
-        screenshot = pyautogui.screenshot()
+        # 获取窗口位置和大小
+        window_x, window_y, window_width, window_height = pygame_window.left, pygame_window.top, pygame_window.width, pygame_window.height
+
+        # 截取窗口图像
+        screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
         # 保存截图
         screenshot.save("screenshot.png")
 
+        time.sleep(1)  # 可以根据需要调整截图的时间间隔
 
     time.sleep(3)
 
