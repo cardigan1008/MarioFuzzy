@@ -4,15 +4,11 @@ import math
 # 假设这是你的游戏评分函数
 import numpy as np
 
+from action.transform import Transform
+from action.fuzz import Fuzz
 
-def get_score(input_string):
-    # 在这里实现调用游戏的函数并返回得分
-    return 1
-
-def mutate():
-    pass
-
-# 退火算法优化字符串以获得最高得分
+def get_score(seed):
+    return Fuzz.single_run(seed)[1]
 
 def simulated_annealing_optimization(initial_string, temperature=1.0, cooling_rate=0.95, iterations=1000):
     current_string = initial_string
@@ -25,7 +21,7 @@ def simulated_annealing_optimization(initial_string, temperature=1.0, cooling_ra
         temperature *= cooling_rate
 
         # 在当前字符串附近进行变化
-        new_string = mutate(current_string)
+        new_string = Transform.transform(current_string)
 
         # 计算新字符串的得分
         new_score = get_score(new_string)
@@ -46,9 +42,10 @@ def simulated_annealing_optimization(initial_string, temperature=1.0, cooling_ra
     return best_string, best_score
 
 # 设置初始字符串
-initial_input = ''
 
-best_input, best_score = simulated_annealing_optimization(initial_input)
-
-print("Best Input String:", best_input)
-print("Best Score:", best_score)
+# initial_input = ''
+#
+# best_input, best_score = simulated_annealing_optimization(initial_input)
+#
+# print("Best Input String:", best_input)
+# print("Best Score:", best_score)
