@@ -1,6 +1,3 @@
-import cv2
-import numpy as np
-import os
 import subprocess
 import os
 import yaml
@@ -54,6 +51,8 @@ def play_game(operation_list):
         yaml_data = yaml.safe_load(file)
     game_path = yaml_data["game_path"]
 
+    current_directory = os.getcwd()
+    print(current_directory)
     os.chdir(game_path)
 
     pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
@@ -85,7 +84,7 @@ def play_game(operation_list):
         # 截取窗口图像
         screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
         # 保存截图
-        screenshot.save("screenshot.png")
+        screenshot.save(current_directory+"/screenshot")
 
         time.sleep(1)  # 可以根据需要调整截图的时间间隔
 
