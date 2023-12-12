@@ -4,6 +4,7 @@ import random
 
 from action import transform
 from action import run
+from util.SA1 import simulated_annealing_optimization
 
 
 def read_file_content(file_path):
@@ -30,12 +31,30 @@ class Fuzz:
 
         transform_action = transform.Transform(operation_list)
         output_data = transform_action.transform()
-
         # 保存 output_data 到新文件
         self.save_output_data(output_data)
 
         # 运行游戏
         run.play_game(output_data)
+        score = 0  # TODO: get real score
+
+        return output_data,score
+
+    def sa_run(self,seed):
+        simulated_annealing_optimization(seed)
+
+    def single_run(self,seed):
+        # 加载seed
+        logging.info(f"Begin to fuzz with seed: {seed}")
+        operation_list = read_file_content(self.target_path + seed)
+        # 运行
+        run.play_game(operation_list)
+        score = 0  # TODO: get real score
+        return seed,score
+
+    def seed_select(self):
+        simulated_annealing_optimization(run)
+        return " "
 
     def save_output_data(self, data):
         # 获取当前输出文件的序号，如 seed1.txt、seed2.txt 等
