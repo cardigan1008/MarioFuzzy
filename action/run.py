@@ -1,6 +1,3 @@
-import cv2
-import numpy as np
-import os
 import subprocess
 import os
 import yaml
@@ -47,6 +44,18 @@ class KeyboardActions:
         self.keyboard.release(Key.enter)
 
 
+def take_screenshot(window, counter):
+    # 获取窗口位置和大小
+    window_x, window_y, window_width, window_height = window.left, window.top, window.width, window.height
+
+    # 截取窗口图像
+    screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
+    # 保存截图
+    screenshot.save("./screenshot" + str(counter) + ".png")
+
+    # 可以根据需要返回截图对象或者其他信息
+
+
 def play_game(operation_list):
     # 打开 YAML 文件
     with open("action/config.yaml", "r") as file:
@@ -55,11 +64,10 @@ def play_game(operation_list):
     game_path = yaml_data["game_path"]
 
     os.chdir(game_path)
-
     pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
     actions = KeyboardActions()
 
-    time.sleep(1)
+    time.sleep(5)
     actions.press_enter_key()
     time.sleep(5)
     counter = 0
@@ -79,14 +87,9 @@ def play_game(operation_list):
         elif i == "d":
             actions.press_down_key()
 
-        # 获取窗口位置和大小
-        window_x, window_y, window_width, window_height = pygame_window.left, pygame_window.top, pygame_window.width, pygame_window.height
-
-        # 截取窗口图像
-        screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
-        # 保存截图
-        screenshot.save("screenshot.png")
-
+        # 每次执行操作都截取游戏窗口的截图
+        take_screenshot(pygame_window, counter)
+        counter = counter + 1
         time.sleep(1)  # 可以根据需要调整截图的时间间隔
 
     time.sleep(3)
@@ -96,4 +99,4 @@ def play_game(operation_list):
 
 if __name__ == "__main__":
     time.sleep(1)
-    play_game("llaassddrr")
+    play_game("llllaaaarrrr")
