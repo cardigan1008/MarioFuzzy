@@ -1,6 +1,6 @@
 import logging
 import coloredlogs
-from cmd import parse_and_run
+from command import parse_and_run
 
 coloredlogs.install(level='INFO', fmt='%(asctime)s - %(levelname)s - %(message)s')
 
