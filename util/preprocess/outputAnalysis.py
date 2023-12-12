@@ -1,3 +1,4 @@
+import glob
 import numpy as np
 import pyautogui
 import cv2
@@ -31,47 +32,46 @@ def fetch_image():
 class OutputAnalysis:
 
     def check_image(self, image_path):
-        # 读取目标图片和截屏
-        template = cv2.imread('mario_bros.png', cv2.IMREAD_UNCHANGED)
-        screenshot = cv2.imread('screenshot.png', cv2.IMREAD_UNCHANGED)
-        if template is None or screenshot is None:
-            print('Could not open or find the images!')
-            exit(0)
+        template_image_path = './mario/small_normal/right_small_normal_0.png'
 
-        # 获取模板的透明度信息（alpha通道）
-        template_alpha = template[:, :, 3]
-        # 使用透明度信息创建掩码
-        mask = template_alpha > 0
-        # 将模板的透明背景保留
-        template_rgb = template[:, :, :3]  # 获取RGB通道
-        template_with_alpha = np.zeros_like(template_rgb, dtype=np.uint8)
-        template_with_alpha[mask] = template_rgb[mask]
+        # 遍历文件
+        PATH_TO_TEST_IMAGES_DIR = './mario'
+        for pidImage in glob.glob(PATH_TO_TEST_IMAGES_DIR + "/*/*.png"):
+            template_image_path = pidImage
+            template_image_path = template_image_path.replace('\\', '/')
+            print(template_image_path)
 
-        templateGray = cv2.cvtColor(template_with_alpha, cv2.COLOR_BGR2GRAY)
-        screenshotGray = cv2.cvtColor(screenshot, cv2.COLOR_BGR2GRAY)
-        cv2.imshow("Template", templateGray)
-        cv2.imshow("Screenshot", screenshotGray)
-        # 使用模板匹配方法
-        result = cv2.matchTemplate(screenshotGray, templateGray, cv2.TM_CCORR_NORMED)
-        (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
-        (startX, startY) = maxLoc
-        endX = startX + template.shape[1]
-        endY = startY + template.shape[0]
+            # 读取mario和背景
+            template = cv2.imread(template_image_path, 0)
+            screenshot = cv2.imread(image_path, 0)
+            if template is None or screenshot is None:
+                print('Could not open or find the images!')
+                exit(0)
+            template = cv2.resize(template, None, fx=2, fy=2)
+            # 创建SIFT对象
+            sift = cv2.xfeatures2d.SIFT_create()
+            # 提取特征点
+            kp1, des1 = sift.detectAndCompute(template, None)
+            kp2, des2 = sift.detectAndCompute(screenshot, None)
+            # 创建BFMatcher对象
+            bf = cv2.BFMatcher()
+            # 匹配特征点
+            matches = bf.knnMatch(des1, des2, k=2)
+            # 应用ratio test
+            good = []
+            for m, n in matches:
+                if m.distance < 0.75 * n.distance:
+                    good.append([m])
+            # 若匹配超过5点则认为存在
+            if len(good) > 5:
+                # # 画出匹配结果
+                # img3 = cv2.drawMatchesKnn(template, kp1, screenshot, kp2, good, None, flags=2)
+                # # 显示图片
+                # cv2.imshow('result', img3)
+                # cv2.waitKey(0)
+                return True
+        return False
 
-        cv2.rectangle(screenshot, (startX, startY), (endX, endY), (255, 0, 0), 3)
-
-        print(np.max(result))
-        cv2.imshow("Output", screenshot)
-        cv2.waitKey(0)
-
-        # # 设置匹配阈值，根据具体情况调整
-        # threshold = 0.8
-        #
-        # # 如果最大匹配值大于阈值，认为目标存在
-        # if np.max(result) > threshold:
-        #     return True
-        # else:
-        #     return False
 
     # image_path 为截屏路径如 screenshot.png。
     def extract_score_from_image(self, image_path):
@@ -101,6 +101,7 @@ if __name__ == "__main__":
     s = fetch_image()
     s.save("screenshot.png")
     analysis = OutputAnalysis()
+    print(analysis.check_image("screenshot.png"))
     print(analysis.extract_score_from_image("screenshot.png"))
     print(analysis.extract_gold_from_image("screenshot.png"))
 
