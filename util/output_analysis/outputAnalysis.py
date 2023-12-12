@@ -1,4 +1,5 @@
 import glob
+import time
 import numpy as np
 import pyautogui
 import cv2
@@ -31,20 +32,21 @@ def fetch_image():
 
 class OutputAnalysis:
 
-    def check_image(self, image_path):
-        template_image_path = './mario/small_normal/right_small_normal_0.png'
-
+    def extract_mario_des(self):
+        template_image_path = '../preprocess/mario/small_normal/right_small_normal_0.png'
+        arr_des = []
+        arr_kp = []
+        arr_template = []
         # 遍历文件
-        PATH_TO_TEST_IMAGES_DIR = './mario'
+        PATH_TO_TEST_IMAGES_DIR = '../preprocess/mario'
         for pidImage in glob.glob(PATH_TO_TEST_IMAGES_DIR + "/*/*.png"):
             template_image_path = pidImage
             template_image_path = template_image_path.replace('\\', '/')
-            print(template_image_path)
+            # print(template_image_path)
 
             # 读取mario和背景
             template = cv2.imread(template_image_path, 0)
-            screenshot = cv2.imread(image_path, 0)
-            if template is None or screenshot is None:
+            if template is None:
                 print('Could not open or find the images!')
                 exit(0)
             template = cv2.resize(template, None, fx=2, fy=2)
@@ -52,12 +54,24 @@ class OutputAnalysis:
             sift = cv2.xfeatures2d.SIFT_create()
             # 提取特征点
             kp1, des1 = sift.detectAndCompute(template, None)
-            kp2, des2 = sift.detectAndCompute(screenshot, None)
-            # 创建BFMatcher对象
-            bf = cv2.BFMatcher()
+            arr_des.append(des1)
+            arr_kp.append(kp1)
+            arr_template.append(template)
+        return arr_des, arr_kp, arr_template
+
+    def check_image(self, image_path, train_des, train_kp, train_template):
+        screenshot = cv2.imread(image_path, 0)
+        if screenshot is None:
+            print('Could not open or find the images!')
+            exit(0)
+        # 创建SIFT对象
+        sift = cv2.xfeatures2d.SIFT_create()
+        # 提取特征点
+        kp2, des2 = sift.detectAndCompute(screenshot, None)
+        bf = cv2.BFMatcher()
+        for i in range(len(train_des)):
             # 匹配特征点
-            matches = bf.knnMatch(des1, des2, k=2)
-            # 应用ratio test
+            matches = bf.knnMatch(train_des[i], des2, k=2)
             good = []
             for m, n in matches:
                 if m.distance < 0.75 * n.distance:
@@ -65,11 +79,13 @@ class OutputAnalysis:
             # 若匹配超过5点则认为存在
             if len(good) > 5:
                 # # 画出匹配结果
-                # img3 = cv2.drawMatchesKnn(template, kp1, screenshot, kp2, good, None, flags=2)
+                # img3 = cv2.drawMatchesKnn(train_template[i], train_kp[i], screenshot, kp2, good, None, flags=2)
                 # # 显示图片
                 # cv2.imshow('result', img3)
                 # cv2.waitKey(0)
+                print("mario is in the picture")
                 return True
+        print("mario is not in the picture")
         return False
 
 
@@ -98,11 +114,16 @@ class OutputAnalysis:
 
 
 if __name__ == "__main__":
+    time_start = time.time() #开始计时
+
     s = fetch_image()
     s.save("screenshot.png")
     analysis = OutputAnalysis()
-    print(analysis.check_image("screenshot.png"))
-    print(analysis.extract_score_from_image("screenshot.png"))
-    print(analysis.extract_gold_from_image("screenshot.png"))
+    t1,t2,t3 = analysis.extract_mario_des()
+    analysis.check_image("screenshot.png",t1,t2,t3)
+    analysis.extract_score_from_image("screenshot.png")
+    analysis.extract_gold_from_image("screenshot.png")
 
-
+    time_end = time.time() #结束计时
+    time_c = time_end - time_start #运行所花时间
+    print('time cost', time_c, 's')

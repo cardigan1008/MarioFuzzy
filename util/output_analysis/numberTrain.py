@@ -10,7 +10,7 @@ RESIZED_IMAGE_HEIGHT = 30
 
 def main():
     # 读取训练数字图像
-    imgTrainingNumbers = cv2.imread("resources/graphics/numberImage.png")
+    imgTrainingNumbers = cv2.imread("numberImage.png")
     if imgTrainingNumbers is None:
         print("错误: 无法从文件中读取图像 \n\n")
         os.system("pause")
