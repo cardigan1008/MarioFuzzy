@@ -51,7 +51,7 @@ def take_screenshot(window, counter, current_directory):
     # 截取窗口图像
     screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
     # 保存截图
-    screenshot.save(os.path.join(current_directory, "screenshot" + str(counter) + ".png"))
+    screenshot.save(os.path.join(current_directory, "product/screenshots/screenshot" + str(counter) + ".png"))
 
     # 可以根据需要返回截图对象或者其他信息
 
