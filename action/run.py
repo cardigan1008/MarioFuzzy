@@ -3,9 +3,9 @@ import os
 import yaml
 import time
 import pyautogui
-from pynput.keyboard import Key, Controller
-from ewmh import EWMH
+import pygetwindow
 
+from pynput.keyboard import Key, Controller
 
 
 class KeyboardActions:
@@ -46,12 +46,12 @@ class KeyboardActions:
 
 def take_screenshot(window, counter, current_directory):
     # 获取窗口位置和大小
-    window_x, window_y, window_width, window_height = window.get_geometry()
+    window_x, window_y, window_width, window_height = window.left, window.top, window.width, window.height
 
     # 截取窗口图像
     screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
     # 保存截图
-    screenshot.save(os.path.join(current_directory, f"screenshot{counter}.png"))
+    screenshot.save(os.path.join(current_directory, "product/screenshots/screenshot" + str(counter) + ".png"))
 
     # 可以根据需要返回截图对象或者其他信息
 
@@ -65,7 +65,6 @@ def play_game(operation_list):
 
     current_directory = os.getcwd()
     print(current_directory)
-
     os.chdir(game_path)
     pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
     actions = KeyboardActions()
@@ -76,8 +75,7 @@ def play_game(operation_list):
     counter = 0
 
     # 获取 Pygame 窗口句柄
-    ewmh = EWMH()
-    window = ewmh.getActiveWindow()
+    pygame_window = pygetwindow.getWindowsWithTitle("Super Mario Bros 1-1")[0]
 
     for i in operation_list:
         if i == "l":
@@ -93,12 +91,13 @@ def play_game(operation_list):
 
 
         # 每次执行操作都截取游戏窗口的截图
-        take_screenshot(window, counter, current_directory)
+        take_screenshot(pygame_window, counter, current_directory)
         counter = counter + 1
 
         time.sleep(1)  # 可以根据需要调整截图的时间间隔
 
     time.sleep(3)
+
     pygame_process.terminate()
 
 
