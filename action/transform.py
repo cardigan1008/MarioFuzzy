@@ -10,6 +10,7 @@ class TransformKind(Enum):
     CHAR_DEL = 2
     HAVOC = 3
     SPLICE = 4
+    SHUFFLE = 5
 
 
 class Transform:
@@ -34,6 +35,8 @@ class Transform:
             return self.havoc()
         elif transform_kind == TransformKind.SPLICE:
             return self.splice()
+        elif transform_kind == TransformKind.SHUFFLE:
+            return self.shuffle()
 
     def char_flip(self, n=None, K=None):
         K = random.randint(1, len(self.input_data)) if K is None else min(K, len(self.input_data))
@@ -83,4 +86,8 @@ class Transform:
     def splice(self):
         midpoint = len(self.input_data) // 2
         self.input_data = self.input_data[midpoint:] + self.input_data[:midpoint]
+        return self.input_data
+
+    def shuffle(self):
+        self.input_data = ''.join(random.sample(self.input_data, len(self.input_data)))
         return self.input_data
