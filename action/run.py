@@ -7,7 +7,6 @@ from pynput.keyboard import Key, Controller
 from ewmh import EWMH
 
 
-
 class KeyboardActions:
     def __init__(self):
         self.keyboard = Controller()
@@ -45,15 +44,25 @@ class KeyboardActions:
 
 
 def take_screenshot(window, counter, current_directory):
-    # 获取窗口位置和大小
-    window_x, window_y, window_width, window_height = window.get_geometry()
+    # 使用 xdotool 获取活动窗口的几何信息
+    geometry_info = subprocess.run(['xdotool', 'getactivewindow', 'getwindowgeometry'], capture_output=True, text=True)
 
-    # 截取窗口图像
-    screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
-    # 保存截图
-    screenshot.save(os.path.join(current_directory, f"screenshot{counter}.png"))
+    # 解析获取到的几何信息
+    lines = geometry_info.stdout.split('\n')
+    for line in lines:
+        if line.startswith('Geometry:'):
+            _, geometry = line.split(':', 1)
+            geometry = geometry.strip().split(' ')
+            window_x, window_y = map(int, geometry[0].split('+'))
+            window_width, window_height = map(int, geometry[1].split('x'))
 
-    # 可以根据需要返回截图对象或者其他信息
+            # 截取窗口图像
+            screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
+            # 保存截图
+            screenshot.save(os.path.join(current_directory, f"screenshot{counter}.png"))
+
+            # 可以根据需要返回截图对象或者其他信息
+            break
 
 
 def play_game(operation_list):
@@ -90,7 +99,6 @@ def play_game(operation_list):
             actions.press_s_key()
         elif i == "d":
             actions.press_down_key()
-
 
         # 每次执行操作都截取游戏窗口的截图
         take_screenshot(window, counter, current_directory)
