@@ -4,7 +4,7 @@ import random
 
 from action import transform
 from action import run
-from util.SA1 import simulated_annealing_optimization
+from util import SA1
 
 
 def read_file_content(file_path):
@@ -25,35 +25,30 @@ class Fuzz:
     def run(self):
         file_list = self.get_file_list()
         cur_seed = random.choice(file_list)  # TODO: implement selection
+        # logging.info(f"Begin to fuzz with seed: {cur_seed}")
+        # operation_list = read_file_content(self.target_path + cur_seed)
 
-        logging.info(f"Begin to fuzz with seed: {cur_seed}")
-        operation_list = read_file_content(self.target_path + cur_seed)
-
-        transform_action = transform.Transform(operation_list)
-        output_data = transform_action.transform()
+        # transform_action = transform.Transform(operation_list)
+        # output_data = transform_action.transform()
         # 保存 output_data 到新文件
-        self.save_output_data(output_data)
+
+        # self.save_output_data(output_data)
 
         # 运行游戏
-        run.play_game(output_data)
-        score = 0  # TODO: get real score
+        # run.play_game(output_data)
+        output_data, score = SA1.simulated_annealing_optimization(cur_seed)
+        # self.save_output_data(output_data)
+        return output_data, score
 
-        return output_data,score
-
-    def sa_run(self,seed):
-        simulated_annealing_optimization(seed)
-
-    def single_run(self,seed):
+    def single_run(self, seed):
         # 加载seed
         logging.info(f"Begin to fuzz with seed: {seed}")
         operation_list = read_file_content(self.target_path + seed)
         # 运行
-        run.play_game(operation_list)
         score = 0  # TODO: get real score
-        return seed,score
+        return seed, score
 
     def seed_select(self):
-        simulated_annealing_optimization(run)
         return " "
 
     def save_output_data(self, data):
