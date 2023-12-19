@@ -17,6 +17,25 @@ def read_file_content(file_path):
         return None
 
 
+import random
+
+
+def sort_tuples(tuples_list):
+    sorted_tuples = sorted(tuples_list, key=lambda x: x[1], reverse=True)
+    return sorted_tuples
+
+
+def select_tuples(sorted_tuples, high_ratio, random_ratio):
+    total_tuples = len(sorted_tuples)
+    high_count = int(total_tuples * high_ratio)
+
+    high_tuples = sorted_tuples[:high_count]
+    random_tuple = random.choice(sorted_tuples[high_count:])
+
+    selected_tuple = random.choice(high_tuples + [random_tuple])
+    return selected_tuple
+
+
 class Fuzz:
     def __init__(self, target_path, crash_path):
         self.target_path = target_path
@@ -24,7 +43,19 @@ class Fuzz:
 
     def run(self):
         file_list = self.get_file_list()
+        seed_score_pairs = []
+        for i in range(len(file_list)):
+            seed = file_list.__getitem__(i)
+            seed_score_pairs.append((seed, SA1.get_score(seed)))
+
+        sorted_tuples = sort_tuples(seed_score_pairs)
+        high_ratio = 0.7
+        random_ratio = 0.3
+
+        selected_tuple = select_tuples(sorted_tuples, high_ratio, random_ratio)
+
         cur_seed = random.choice(file_list)  # TODO: implement selection
+
         # logging.info(f"Begin to fuzz with seed: {cur_seed}")
         # operation_list = read_file_content(self.target_path + cur_seed)
 

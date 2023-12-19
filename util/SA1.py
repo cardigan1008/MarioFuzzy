@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 def get_score(seed):
     return random.random()
+    # 在这里计算单次游戏得分
 
 def simulated_annealing_optimization(initial_string, temperature=1.0, cooling_rate=0.95, iterations=1000):
     current_string = initial_string
