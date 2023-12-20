@@ -45,8 +45,12 @@ class Fuzz:
         file_list = self.get_file_list()
         seed_score_pairs = []
         for i in range(len(file_list)):
-            seed = file_list.__getitem__(i)
-            seed_score_pairs.append((seed, SA1.get_score(seed)))
+            tmp_ops = read_file_content(file_list[i])
+            _, gold, score = run.play_game(tmp_ops)
+            seed_score_pairs.append((tmp_ops, score))
+
+        #     seed = file_list.__getitem__(i)
+        #     seed_score_pairs.append((seed, SA1.get_score(seed)))
         round = 0
         while True:
             sorted_tuples = sort_tuples(seed_score_pairs)
