@@ -111,7 +111,7 @@ def play_game(operation_list):
         boolValue, gold, score = take_screenshot(pygame_window, counter, current_directory)
         boolValues.append(boolValue)
         golds.append(int(gold))
-        scores.append(int(score[-4:-1]))
+        scores.append(int(score[-5:-1]))
         counter = counter + 1
         time.sleep(1)  # 可以根据需要调整截图的时间间隔
 
