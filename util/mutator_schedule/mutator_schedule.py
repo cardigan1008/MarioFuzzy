@@ -34,7 +34,8 @@ class MutatorSchedule:
             self.temperature *= self.cooling_rate
 
             # 在当前字符串附近进行变化
-            new_op = Transform.transform(current_op)
+            transform_action = Transform(current_op)
+            new_op = transform_action.transform()
 
             # 计算新字符串的得分
             is_mario, new_score = get_score(new_op, self.energy)

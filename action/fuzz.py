@@ -53,7 +53,9 @@ class Fuzz:
             seed_schedule = SeedSchedule(seed_score_pairs)
             selected_tuple = seed_schedule.schedule()
 
-            energy = min(len(selected_tuple[0]), c.OP_COUNT_BASELINE * (selected_tuple[1] / c.SCORE_BASELINE))
+            energy = len(selected_tuple[0])
+            if not (selected_tuple[1] / c.SCORE_BASELINE == 0):
+                energy = min(len(selected_tuple[0]), c.OP_COUNT_BASELINE * (selected_tuple[1] / c.SCORE_BASELINE))
 
             mutation_schedule = MutatorSchedule(selected_tuple, energy)
             output_data, score, is_crash = mutation_schedule.schedule()

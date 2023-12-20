@@ -107,6 +107,14 @@ def play_game(operation_list, energy):
 
         # 每次执行操作都截取游戏窗口的截图
         boolValue, gold, score = take_screenshot(pygame_window)
+        if len(gold) == 0:
+            gold = 0
+        if gold == '':
+            gold = 0
+        if len(score) == 0:
+            score = "00000"
+        if score == '':
+            score = "00000"
         boolValues.append(boolValue)
         golds.append(int(gold))
         scores.append(int(score[-4:-1]))
