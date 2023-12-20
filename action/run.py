@@ -56,7 +56,7 @@ def take_screenshot(window):
     window_x, window_y, window_width, window_height = window.left, window.top, window.width, window.height
 
     # 截取窗口图像
-    screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
+    screenshot = pyautogui.screenshot(region=(window_x + 20, window_y, window_width - 20, window_height - 20))
     # 将Pillow图像对象转换为OpenCV图像对象
     opencv_image = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
     # 将OpenCV图像对象转换为灰度图像

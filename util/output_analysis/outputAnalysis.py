@@ -1,6 +1,8 @@
 import glob
 import time
 import cv2
+import numpy as np
+import pyautogui
 import win32con, win32gui
 from PIL import ImageGrab
 from util.output_analysis.numberExtract import number_get
@@ -80,7 +82,7 @@ class OutputAnalysis:
             print('Could not open or find the images!')
             exit(0)
         # 创建SIFT对象
-        sift = cv2.xfeatures2d.SIFT_create()
+        sift = cv2.SIFT_create()
         # 提取特征点
         kp2, des2 = sift.detectAndCompute(screenshot, None)
         bf = cv2.BFMatcher()
@@ -92,7 +94,7 @@ class OutputAnalysis:
                 if m.distance < 0.75 * n.distance:
                     good.append([m])
             # 若匹配超过6点则认为存在
-            if len(good) > 6:
+            if len(good) > 3:
                 # # 画出匹配结果
                 # img3 = cv2.drawMatchesKnn(train_template[i], train_kp[i], screenshot, kp2, good, None, flags=2)
                 # # 显示图片
@@ -109,7 +111,7 @@ class OutputAnalysis:
             print('Could not open or find the images!')
             exit(0)
         # 创建SIFT对象
-        sift = cv2.xfeatures2d.SIFT_create()
+        sift = cv2.SIFT_create()
         # 提取特征点
         kp2, des2 = sift.detectAndCompute(screenshot, None)
         bf = cv2.BFMatcher()
@@ -121,7 +123,7 @@ class OutputAnalysis:
                 if m.distance < 0.75 * n.distance:
                     good.append([m])
             # 若匹配超过6点则认为存在
-            if len(good) > 6:
+            if len(good) > 3:
                 # # 画出匹配结果
                 # img3 = cv2.drawMatchesKnn(train_template[i], train_kp[i], screenshot, kp2, good, None, flags=2)
                 # # 显示图片
