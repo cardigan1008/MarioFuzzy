@@ -47,28 +47,27 @@ class Fuzz:
         for i in range(len(file_list)):
             seed = file_list.__getitem__(i)
             seed_score_pairs.append((seed, SA1.get_score(seed)))
+        round = 0
+        while True:
+            sorted_tuples = sort_tuples(seed_score_pairs)
+            high_ratio = 0.7
+            random_ratio = 0.3
 
-        sorted_tuples = sort_tuples(seed_score_pairs)
-        high_ratio = 0.7
-        random_ratio = 0.3
+            selected_tuple = select_tuples(sorted_tuples, high_ratio, random_ratio)
+            seed_score_pairs.remove(selected_tuple)
+            # logging.info(f"Begin to fuzz with seed: {cur_seed}")
+            # operation_list = read_file_content(self.target_path + cur_seed)
 
-        selected_tuple = select_tuples(sorted_tuples, high_ratio, random_ratio)
+            # transform_action = transform.Transform(operation_list)
+            # output_data = transform_action.transform()
+            # 保存 output_data 到新文件
 
-        cur_seed = random.choice(file_list)  # TODO: implement selection
+            # self.save_output_data(output_data)
 
-        # logging.info(f"Begin to fuzz with seed: {cur_seed}")
-        # operation_list = read_file_content(self.target_path + cur_seed)
-
-        # transform_action = transform.Transform(operation_list)
-        # output_data = transform_action.transform()
-        # 保存 output_data 到新文件
-
-        # self.save_output_data(output_data)
-
-        # 运行游戏
-        # run.play_game(output_data)
-        output_data, score = SA1.simulated_annealing_optimization(cur_seed)
-        # self.save_output_data(output_data)
+            # 运行游戏
+            # run.play_game(output_data)
+            output_data, score = SA1.simulated_annealing_optimization(selected_tuple)
+            self.save_output_data(output_data)
         return output_data, score
 
     def single_run(self, seed):
