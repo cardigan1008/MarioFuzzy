@@ -5,7 +5,7 @@ import pyautogui
 import cv2
 import win32api, win32con, win32gui
 from PIL import ImageGrab
-from numberExtract import number_get
+from util.output_analysis.numberExtract import number_get
 import pickle
 
 

@@ -73,7 +73,7 @@ def take_screenshot(window, counter, current_directory):
 
 def play_game(operation_list):
     # 打开 YAML 文件
-    with open("action/config.yaml", "r") as file:
+    with open("config.yaml", "r") as file:
         # 使用 PyYAML 加载 YAML 文件的内容
         yaml_data = yaml.safe_load(file)
     game_path = yaml_data["game_path"]
@@ -82,6 +82,7 @@ def play_game(operation_list):
     print(current_directory)
     os.chdir(game_path)
     pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
+    os.chdir(current_directory+"\\..\\util\\output_analysis")
     actions = KeyboardActions()
 
     time.sleep(5)
