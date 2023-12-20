@@ -325,4 +325,22 @@ def main():
 
 > seed_schedule/
 
-// TODO
+实现了一个排序算法，用于对种子序列进行排序。
+```python
+def sort_tuples(tuples_list):
+    sorted_tuples = sorted(tuples_list, key=lambda x: x[1], reverse=True)
+    return sorted_tuples
+```
+实现了一个选择算法，用于对种子进行有一定权重的选择。在这里，我们将排好序的种子-分数对按一定比例切分成高分组和低分组，并在低分组中随机选取一个同高分数组一同进行随机选择。
+```python
+def select_tuples(sorted_tuples, high_ratio):
+    total_tuples = len(sorted_tuples)
+    high_count = int(total_tuples * high_ratio)
+
+    high_tuples = sorted_tuples[:high_count]
+    random_tuple = random.choice(sorted_tuples[high_count:])
+
+    selected_tuple = random.choice(high_tuples + [random_tuple])
+    return selected_tuple
+```
+
