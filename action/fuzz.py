@@ -25,7 +25,7 @@ def sort_tuples(tuples_list):
     return sorted_tuples
 
 
-def select_tuples(sorted_tuples, high_ratio, random_ratio):
+def select_tuples(sorted_tuples, high_ratio):
     total_tuples = len(sorted_tuples)
     high_count = int(total_tuples * high_ratio)
 
@@ -48,17 +48,25 @@ class Fuzz:
             tmp_ops = read_file_content(file_list[i])
             _, gold, score = run.play_game(tmp_ops)
             seed_score_pairs.append((tmp_ops, score))
-
         #     seed = file_list.__getitem__(i)
         #     seed_score_pairs.append((seed, SA1.get_score(seed)))
         round = 0
+        high_ratio = 0.7
+        random_ratio = 0.3
         while True:
-            sorted_tuples = sort_tuples(seed_score_pairs)
-            high_ratio = 0.7
-            random_ratio = 0.3
 
-            selected_tuple = select_tuples(sorted_tuples, high_ratio, random_ratio)
-            seed_score_pairs.remove(selected_tuple)
+            sorted_tuples = sort_tuples(seed_score_pairs)
+            selected_tuple = select_tuples(sorted_tuples, high_ratio)
+            # seed_score_pairs.remove(selected_tuple) #Delete Selected Tuple
+
+            print("Round:" + str(round))
+            print("Max Score Seed Pair:" + sorted_tuples[0])
+
+            output_data, score = SA1.simulated_annealing_optimization(selected_tuple)
+            sorted_tuples.append((output_data, score))
+
+            self.save_output_data(output_data)
+
             # logging.info(f"Begin to fuzz with seed: {cur_seed}")
             # operation_list = read_file_content(self.target_path + cur_seed)
 
@@ -70,9 +78,6 @@ class Fuzz:
 
             # 运行游戏
             # run.play_game(output_data)
-            output_data, score = SA1.simulated_annealing_optimization(selected_tuple)
-            self.save_output_data(output_data)
-        return output_data, score
 
     def single_run(self, seed):
         # 加载seed
