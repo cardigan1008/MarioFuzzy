@@ -204,8 +204,74 @@ def shuffle(self):
 
 > run.py
 
+使用pynput库将字符串的操作序列转换为游戏中的输入
 
-// TODO
+```python
+class KeyboardActions:
+    def __init__(self):
+        self.keyboard = Controller()
+        self.time_interval = 0.5
+
+    def press_a_key(self):
+        self.keyboard.press('a')
+        time.sleep(self.time_interval)
+        self.keyboard.release('a')
+    def press_up_key(self):
+        self.keyboard.press(Key.up)
+        time.sleep(self.time_interval)
+        self.keyboard.release(Key.up)
+    def press_s_key(self):
+        self.keyboard.press('s')
+        time.sleep(self.time_interval)
+        self.keyboard.release('s')
+
+    def press_left_key(self):
+        self.keyboard.press(Key.left)
+        time.sleep(self.time_interval)
+        self.keyboard.release(Key.left)
+
+    def press_right_key(self):
+        self.keyboard.press(Key.right)
+        time.sleep(self.time_interval)
+        self.keyboard.release(Key.right)
+
+    def press_down_key(self):
+        self.keyboard.press(Key.down)
+        time.sleep(self.time_interval)
+        self.keyboard.release(Key.down)
+
+    def press_enter_key(self):
+        self.keyboard.press(Key.enter)
+        time.sleep(self.time_interval)
+        self.keyboard.release(Key.enter)
+```
+
+对游戏窗口截图，交由识别部分进行图像识别，实时得到结果
+
+```python
+def take_screenshot(window):
+    # 获取窗口位置和大小
+    window_x, window_y, window_width, window_height = window.left, window.top, window.width, window.height
+
+    # 截取窗口图像
+    screenshot = pyautogui.screenshot(region=(window_x + 20, window_y, window_width - 20, window_height - 20))
+    # 将Pillow图像对象转换为OpenCV图像对象
+    opencv_image = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+    # 将OpenCV图像对象转换为灰度图像
+    gray_image = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2GRAY)
+    boolValue = analysis.check_image(gray_image)
+    gold = analysis.extract_gold(opencv_image)
+    score = analysis.extract_score(opencv_image)
+
+    # 可以根据需要返回截图对象或者其他信息
+    return boolValue, gold, score
+```
+
+创建游戏进程，开始游戏操作
+
+```python
+    pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'], stdin=subprocess.PIPE)
+```
 
 ### Utilities
 
@@ -213,7 +279,35 @@ def shuffle(self):
 
 > preprocess/
 
-// TODO
+##### Mario
+
+> mario/
+
+存储三种状态下的mario图像素材
+
+##### Resources
+
+> resources/
+
+存储原始的mario游戏素材
+
+> getMarioPics.py
+
+对原始mario游戏素材进行切片，得到三种状态下的mario图像素材
+
+```python
+def main():
+    mario_sprites = MarioSprites()
+
+    # 保存所有图片
+    save_images(mario_sprites.right_frames, "./mario/small_normal", "right_small_normal")
+    save_images(mario_sprites.left_frames, "./mario/small_normal", "left_small_normal")
+
+    save_images(mario_sprites.left_big_normal_frames, "./mario/big_normal", "left_big_normal")
+    save_images(mario_sprites.right_big_normal_frames,"./mario/big_normal", "right_big_normal")
+
+    save_images(mario_sprites.right_fire_frames, "./mario/big_fire", "right_big_fire")
+```
 
 #### Output Analyzer
 
