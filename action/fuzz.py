@@ -17,9 +17,6 @@ def read_file_content(file_path):
         return None
 
 
-import random
-
-
 def sort_tuples(tuples_list):
     sorted_tuples = sorted(tuples_list, key=lambda x: x[1], reverse=True)
     return sorted_tuples
@@ -43,30 +40,18 @@ class Fuzz:
 
     def run(self):
         file_list = self.get_file_list()
+
         seed_score_pairs = []
         for i in range(len(file_list)):
-            seed = file_list.__getitem__(i)
-            seed_score_pairs.append((seed, SA1.get_score(seed)))
+            tmp_ops = read_file_content(file_list[i])
+            _, gold, score = run.play_game(tmp_ops)
+            seed_score_pairs.append((tmp_ops, score))
 
         sorted_tuples = sort_tuples(seed_score_pairs)
         high_ratio = 0.7
         random_ratio = 0.3
-
         selected_tuple = select_tuples(sorted_tuples, high_ratio, random_ratio)
 
-        cur_seed = random.choice(file_list)  # TODO: implement selection
-
-        # logging.info(f"Begin to fuzz with seed: {cur_seed}")
-        # operation_list = read_file_content(self.target_path + cur_seed)
-
-        # transform_action = transform.Transform(operation_list)
-        # output_data = transform_action.transform()
-        # 保存 output_data 到新文件
-
-        # self.save_output_data(output_data)
-
-        # 运行游戏
-        # run.play_game(output_data)
         output_data, score = SA1.simulated_annealing_optimization(cur_seed)
         # self.save_output_data(output_data)
         return output_data, score
