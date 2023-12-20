@@ -1,11 +1,15 @@
 import subprocess
 import os
+
+import cv2
+import numpy as np
 import yaml
 import time
 import pyautogui
 import pygetwindow
 
 from pynput.keyboard import Key, Controller
+from util.output_analysis.outputAnalysis import OutputAnalysis
 
 
 class KeyboardActions:
@@ -44,21 +48,32 @@ class KeyboardActions:
         self.keyboard.release(Key.enter)
 
 
+analysis = OutputAnalysis()
+
+
 def take_screenshot(window, counter, current_directory):
     # 获取窗口位置和大小
     window_x, window_y, window_width, window_height = window.left, window.top, window.width, window.height
 
     # 截取窗口图像
     screenshot = pyautogui.screenshot(region=(window_x, window_y, window_width, window_height))
+    # 将Pillow图像对象转换为OpenCV图像对象
+    opencv_image = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
+    # 将OpenCV图像对象转换为灰度图像
+    gray_image = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2GRAY)
+    print(analysis.check_image(gray_image))
+    print(analysis.extract_gold(opencv_image))
+    print(analysis.extract_score(opencv_image))
+
     # 保存截图
-    screenshot.save(os.path.join(current_directory, "product/screenshots/screenshot" + str(counter) + ".png"))
+    # screenshot.save(os.path.join(current_directory, "action/screenshots/screenshot" + str(counter) + ".png"))
 
     # 可以根据需要返回截图对象或者其他信息
 
 
 def play_game(operation_list):
     # 打开 YAML 文件
-    with open("action/config.yaml", "r") as file:
+    with open("config.yaml", "r") as file:
         # 使用 PyYAML 加载 YAML 文件的内容
         yaml_data = yaml.safe_load(file)
     game_path = yaml_data["game_path"]
@@ -67,6 +82,7 @@ def play_game(operation_list):
     print(current_directory)
     os.chdir(game_path)
     pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
+    os.chdir(current_directory+"\\..\\util\\output_analysis")
     actions = KeyboardActions()
 
     time.sleep(5)
@@ -89,7 +105,6 @@ def play_game(operation_list):
         elif i == "d":
             actions.press_down_key()
 
-
         # 每次执行操作都截取游戏窗口的截图
         take_screenshot(pygame_window, counter, current_directory)
         counter = counter + 1
@@ -103,4 +118,4 @@ def play_game(operation_list):
 
 if __name__ == "__main__":
     time.sleep(1)
-    play_game("llllaaaarrrr")
+    play_game("llrraa")

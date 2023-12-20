@@ -3,12 +3,14 @@ import math
 
 # 假设这是你的游戏评分函数
 import numpy as np
-
+import action
 from action.transform import Transform
-from action.fuzz import Fuzz
+from tqdm import tqdm
+
 
 def get_score(seed):
-    return Fuzz.single_run(seed)[1]
+    return random.random()
+    # 在这里计算单次游戏得分
 
 def simulated_annealing_optimization(initial_string, temperature=1.0, cooling_rate=0.95, iterations=1000):
     current_string = initial_string
@@ -17,7 +19,7 @@ def simulated_annealing_optimization(initial_string, temperature=1.0, cooling_ra
     best_string = current_string
     best_score = current_score
 
-    for i in range(iterations):
+    for i in tqdm(range(iterations)):
         temperature *= cooling_rate
 
         # 在当前字符串附近进行变化
@@ -40,12 +42,3 @@ def simulated_annealing_optimization(initial_string, temperature=1.0, cooling_ra
             best_score = current_score
 
     return best_string, best_score
-
-# 设置初始字符串
-
-# initial_input = ''
-#
-# best_input, best_score = simulated_annealing_optimization(initial_input)
-#
-# print("Best Input String:", best_input)
-# print("Best Score:", best_score)
