@@ -52,7 +52,6 @@ class Fuzz:
         #     seed_score_pairs.append((seed, SA1.get_score(seed)))
         round = 0
         high_ratio = 0.7
-        random_ratio = 0.3
         while True:
 
             sorted_tuples = sort_tuples(seed_score_pairs)
