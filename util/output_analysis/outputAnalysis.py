@@ -105,6 +105,34 @@ class OutputAnalysis:
         print("mario is not in the picture")
         return False
 
+    def check_image(self, screenshot):
+        train_des = load_des('train_des.pkl')
+        if screenshot is None:
+            print('Could not open or find the images!')
+            exit(0)
+        # 创建SIFT对象
+        sift = cv2.xfeatures2d.SIFT_create()
+        # 提取特征点
+        kp2, des2 = sift.detectAndCompute(screenshot, None)
+        bf = cv2.BFMatcher()
+        for i in range(len(train_des)):
+            # 匹配特征点
+            matches = bf.knnMatch(train_des[i], des2, k=2)
+            good = []
+            for m, n in matches:
+                if m.distance < 0.75 * n.distance:
+                    good.append([m])
+            # 若匹配超过6点则认为存在
+            if len(good) > 6:
+                # # 画出匹配结果
+                # img3 = cv2.drawMatchesKnn(train_template[i], train_kp[i], screenshot, kp2, good, None, flags=2)
+                # # 显示图片
+                # cv2.imshow('result', img3)
+                # cv2.waitKey(0)
+                print("mario is in the picture")
+                return True
+        print("mario is not in the picture")
+        return False
 
     # image_path 为截屏路径如 screenshot.png。
     def extract_score_from_image(self, image_path):
@@ -117,9 +145,27 @@ class OutputAnalysis:
             res = res[0:6]
         print("score:"+res)
         return res
-
+    def extract_score(self, screen):
+        imgROI = screen[165:219, 140:429]
+        # cv2.imshow("ROI_WIN", imgROI)
+        # cv2.waitKey(0)
+        res = number_get(imgROI)
+        if len(res) > 6:
+            res = res[0:6]
+        print("score:"+res)
+        return res
     def extract_gold_from_image(self, image_path):
         screen = cv2.imread(image_path)
+        imgROI = screen[165:219, 635:730]
+        # cv2.imshow("ROI_WIN", imgROI)
+        # cv2.waitKey(0)
+        res = number_get(imgROI)
+        if len(res) > 2:
+            res = res[0:2]
+        print("gold:"+res)
+        return res
+
+    def extract_gold(self, screen):
         imgROI = screen[165:219, 635:730]
         # cv2.imshow("ROI_WIN", imgROI)
         # cv2.waitKey(0)
