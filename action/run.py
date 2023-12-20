@@ -21,7 +21,10 @@ class KeyboardActions:
         self.keyboard.press('a')
         time.sleep(self.time_interval)
         self.keyboard.release('a')
-
+    def press_up_key(self):
+        self.keyboard.press(Key.up)
+        time.sleep(self.time_interval)
+        self.keyboard.release(Key.up)
     def press_s_key(self):
         self.keyboard.press('s')
         time.sleep(self.time_interval)
@@ -69,6 +72,11 @@ def take_screenshot(window):
     return boolValue, gold, score
 
 
+def simulate_keypress(key, pygame_process):
+    pygame_process.stdin.write(key.encode())
+    pygame_process.stdin.flush()
+
+
 def play_game(operation_list, energy):
     # 打开 YAML 文件
     with open("config.yaml", "r") as file:
@@ -79,7 +87,7 @@ def play_game(operation_list, energy):
     current_directory = os.getcwd()
     print(current_directory)
     os.chdir(game_path)
-    pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
+    pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'], stdin=subprocess.PIPE)
     os.chdir(current_directory + "\\..\\util\\output_analysis")
     actions = KeyboardActions()
 
@@ -99,9 +107,9 @@ def play_game(operation_list, energy):
         elif i == "r":
             actions.press_right_key()
         elif i == "a":
-            actions.press_a_key()
+            actions.press_up_key()
         elif i == "s":
-            actions.press_s_key()
+            actions.press_enter_key()
         elif i == "d":
             actions.press_down_key()
 
@@ -125,6 +133,7 @@ def play_game(operation_list, energy):
     retBool = True
     maxGold = 0
     maxScore = 0
+    pygame_process.stdin.close()
     pygame_process.terminate()
     for i in boolValues:
         if i == False:
