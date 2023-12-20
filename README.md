@@ -319,8 +319,52 @@ def main():
 
 > mutator_schedule/
 
-// TODO
+实现了一个可以根据种子和能量进行游戏运行的函数。
+```python
+def get_score(seed, energy):
+    is_mario, _, score = action.run.play_game(seed, energy)
+    return is_mario, score
+```
+以模拟退火算法为载体进行变异调度，先选中操作种子，并获取其得分。如果发生崩溃，停止操作并返回崩溃。在算法中，通过在迭代循环中在当前种子附近进行变异，并计算新种子的得分，同时监测程序是否崩溃，然后根据Metropolis准则计算接受概率，在接受概率内或得到了更高分的种子-得分对的情况下，会更新种子-得分对，循环直到迭代结束。最后函数会返回迭代完成后的最佳种子-得分对。
+```python
+def schedule(self):
+    current_op = self.seed_score_pairs[0]
+    is_mario, current_score = get_score(current_op, len(current_op))
 
+    if not is_mario:
+        return current_op, current_score, False
+
+    best_op = current_op
+    best_score = current_score
+
+    for _ in tqdm(range(self.iterations)):
+        self.temperature *= self.cooling_rate
+
+        # 在当前字符串附近进行变化
+        transform_action = Transform(current_op)
+        new_op = transform_action.transform()
+
+        # 计算新字符串的得分
+        is_mario, new_score = get_score(new_op, self.energy)
+
+        if not is_mario:
+            return new_op, current_score, False
+
+        # 计算接受概率
+        acceptance_probability = math.exp((new_score - current_score) / self.temperature)
+
+        # 根据概率决定是否接受新字符串
+        if new_score > current_score or np.random.uniform(low=0, high=1) < acceptance_probability:
+            current_op = new_op
+            current_score = new_score
+
+        # 更新最佳字符串
+        if current_score > best_score:
+            best_op = current_op
+            best_score = current_score
+
+    return best_op, best_score, True
+```
 #### Seed Scheduler
 
 > seed_schedule/
