@@ -1,9 +1,7 @@
 import glob
 import time
-import numpy as np
-import pyautogui
 import cv2
-import win32api, win32con, win32gui
+import win32con, win32gui
 from PIL import ImageGrab
 from util.output_analysis.numberExtract import number_get
 import pickle
