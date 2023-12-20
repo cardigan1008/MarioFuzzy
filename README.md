@@ -43,7 +43,7 @@ Please make sure to modify the `game_path` in the `config.yaml` file located in 
 3. 种子调度，基于feedback
    1. 种子优先级排序：得分更高序列优先
    2. 能量分配：根据feedback结果，对照基准线分配energy
-4. 测试生成：五种变异算子，并使用退火算法进行变异算子调度
+4. 测试生成：六种变异算子，并使用退火算法进行变异算子调度
 5. 游戏执行，并截图保存
 6. 结果分析：使用图像识别训练模型，识别分析状态返回结果
 7. 结果保存：保存所有产生唯一状态的测试输入
