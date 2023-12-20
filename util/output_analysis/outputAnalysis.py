@@ -129,9 +129,9 @@ class OutputAnalysis:
                 # # 显示图片
                 # cv2.imshow('result', img3)
                 # cv2.waitKey(0)
-                print("mario is in the picture")
+                # print("mario is in the picture")
                 return True
-        print("mario is not in the picture")
+        # print("mario is not in the picture")
         return False
 
     # image_path 为截屏路径如 screenshot.png。
@@ -152,7 +152,7 @@ class OutputAnalysis:
         res = number_get(imgROI)
         if len(res) > 6:
             res = res[0:6]
-        print("score:"+res)
+        # print("score:"+res)
         return res
     def extract_gold_from_image(self, image_path):
         screen = cv2.imread(image_path)
@@ -172,7 +172,7 @@ class OutputAnalysis:
         res = number_get(imgROI)
         if len(res) > 2:
             res = res[0:2]
-        print("gold:"+res)
+        # print("gold:"+res)
         return res
 
 
