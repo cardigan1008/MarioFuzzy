@@ -61,15 +61,15 @@ def take_screenshot(window, counter, current_directory):
     opencv_image = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
     # 将OpenCV图像对象转换为灰度图像
     gray_image = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2GRAY)
-    print(analysis.check_image(gray_image))
-    print(analysis.extract_gold(opencv_image))
-    print(analysis.extract_score(opencv_image))
+    boolValue = analysis.check_image(gray_image)
+    gold = analysis.extract_gold(opencv_image)
+    score = analysis.extract_score(opencv_image)
 
     # 保存截图
     # screenshot.save(os.path.join(current_directory, "action/screenshots/screenshot" + str(counter) + ".png"))
 
     # 可以根据需要返回截图对象或者其他信息
-
+    return boolValue, gold, score
 
 def play_game(operation_list):
     # 打开 YAML 文件
@@ -89,7 +89,9 @@ def play_game(operation_list):
     actions.press_enter_key()
     time.sleep(5)
     counter = 0
-
+    boolValues = []
+    golds = []
+    scores = []
     # 获取 Pygame 窗口句柄
     pygame_window = pygetwindow.getWindowsWithTitle("Super Mario Bros 1-1")[0]
 
@@ -106,15 +108,29 @@ def play_game(operation_list):
             actions.press_down_key()
 
         # 每次执行操作都截取游戏窗口的截图
-        take_screenshot(pygame_window, counter, current_directory)
+        boolValue, gold, score = take_screenshot(pygame_window, counter, current_directory)
+        boolValues.append(boolValue)
+        golds.append(int(gold))
+        scores.append(int(score[-4:-1]))
         counter = counter + 1
-
         time.sleep(1)  # 可以根据需要调整截图的时间间隔
 
     time.sleep(3)
-
+    retBool = True
+    maxGold = 0
+    maxScore = 0
     pygame_process.terminate()
-
+    for i in boolValues:
+        if i == False:
+            retBool = False
+    for i in golds:
+        if i > maxGold:
+            maxGold = i
+    for i in scores:
+        if i > maxScore:
+            maxScore = i
+    print(retBool, maxGold, maxScore)
+    return retBool, maxGold, maxScore
 
 if __name__ == "__main__":
     time.sleep(1)
