@@ -6,6 +6,7 @@ from tqdm import tqdm
 
 from action import run
 from util.mutator_schedule.mutator_schedule import MutatorSchedule
+from util.preprocess import constants as c
 from util.seed_schedule.seed_schedule import SeedSchedule
 
 
@@ -45,14 +46,16 @@ class Fuzz:
         seed_score_pairs = []
         for i in tqdm(range(len(file_list)), "Loading seeds"):
             tmp_ops = read_file_content(file_list[i])
-            _, gold, score = run.play_game(tmp_ops)
+            _, gold, score = run.play_game(tmp_ops, len(tmp_ops))
             seed_score_pairs.append((tmp_ops, score))
 
         while True:
             seed_schedule = SeedSchedule(seed_score_pairs)
             selected_tuple = seed_schedule.schedule()
 
-            mutation_schedule = MutatorSchedule(selected_tuple)
+            energy = min(len(selected_tuple[0]), c.OP_COUNT_BASELINE * (selected_tuple[1] / c.SCORE_BASELINE))
+
+            mutation_schedule = MutatorSchedule(selected_tuple, energy)
             output_data, score, is_crash = mutation_schedule.schedule()
 
             if is_crash:

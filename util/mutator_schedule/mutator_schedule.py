@@ -7,21 +7,22 @@ from action.transform import Transform
 from tqdm import tqdm
 
 
-def get_score(seed):
-    is_mario, _, score = action.run.play_game(seed)
+def get_score(seed, energy):
+    is_mario, _, score = action.run.play_game(seed, energy)
     return is_mario, score
 
 
 class MutatorSchedule:
-    def __init__(self, seed_score_pairs, temperature=1.0, cooling_rate=0.95, iterations=10):
+    def __init__(self, seed_score_pairs, energy, temperature=1.0, cooling_rate=0.95, iterations=10):
         self.seed_score_pairs = seed_score_pairs
+        self.energy = energy
         self.temperature = temperature
         self.cooling_rate = cooling_rate
         self.iterations = iterations
 
     def schedule(self):
         current_op = self.seed_score_pairs[0]
-        is_mario, current_score = get_score(current_op)
+        is_mario, current_score = get_score(current_op, len(current_op))
 
         if not is_mario:
             return current_op, current_score, False
@@ -36,7 +37,7 @@ class MutatorSchedule:
             new_op = Transform.transform(current_op)
 
             # 计算新字符串的得分
-            is_mario, new_score = get_score(new_op)
+            is_mario, new_score = get_score(new_op, self.energy)
 
             if not is_mario:
                 return new_op, current_score, False

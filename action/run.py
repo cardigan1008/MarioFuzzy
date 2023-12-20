@@ -51,7 +51,7 @@ class KeyboardActions:
 analysis = OutputAnalysis()
 
 
-def take_screenshot(window, counter, current_directory):
+def take_screenshot(window):
     # 获取窗口位置和大小
     window_x, window_y, window_width, window_height = window.left, window.top, window.width, window.height
 
@@ -65,13 +65,11 @@ def take_screenshot(window, counter, current_directory):
     gold = analysis.extract_gold(opencv_image)
     score = analysis.extract_score(opencv_image)
 
-    # 保存截图
-    # screenshot.save(os.path.join(current_directory, "action/screenshots/screenshot" + str(counter) + ".png"))
-
     # 可以根据需要返回截图对象或者其他信息
     return boolValue, gold, score
 
-def play_game(operation_list):
+
+def play_game(operation_list, energy):
     # 打开 YAML 文件
     with open("config.yaml", "r") as file:
         # 使用 PyYAML 加载 YAML 文件的内容
@@ -82,7 +80,7 @@ def play_game(operation_list):
     print(current_directory)
     os.chdir(game_path)
     pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'])
-    os.chdir(current_directory+"\\..\\util\\output_analysis")
+    os.chdir(current_directory + "\\..\\util\\output_analysis")
     actions = KeyboardActions()
 
     time.sleep(5)
@@ -95,7 +93,7 @@ def play_game(operation_list):
     # 获取 Pygame 窗口句柄
     pygame_window = pygetwindow.getWindowsWithTitle("Super Mario Bros 1-1")[0]
 
-    for i in operation_list:
+    for i in operation_list[:energy]:
         if i == "l":
             actions.press_left_key()
         elif i == "r":
@@ -108,7 +106,7 @@ def play_game(operation_list):
             actions.press_down_key()
 
         # 每次执行操作都截取游戏窗口的截图
-        boolValue, gold, score = take_screenshot(pygame_window, counter, current_directory)
+        boolValue, gold, score = take_screenshot(pygame_window)
         boolValues.append(boolValue)
         golds.append(int(gold))
         scores.append(int(score[-4:-1]))
@@ -131,6 +129,7 @@ def play_game(operation_list):
             maxScore = i
     print(retBool, maxGold, maxScore)
     return retBool, maxGold, maxScore
+
 
 if __name__ == "__main__":
     time.sleep(1)

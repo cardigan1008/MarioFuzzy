@@ -171,7 +171,6 @@ SPED_UP_NORMAL = 'sped up normal'
 MARIO_INVINCIBLE = 'mario invincible'
 
 
-
-
-
-
+# FOR FUZZ
+OP_COUNT_BASELINE = 180
+SCORE_BASELINE = 16650
