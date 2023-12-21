@@ -13,7 +13,7 @@ def get_score(seed, energy):
 
 
 class MutatorSchedule:
-    def __init__(self, seed_score_pairs, energy, temperature=1.0, cooling_rate=0.95, iterations=10):
+    def __init__(self, seed_score_pairs, energy, temperature=1.0, cooling_rate=0.95, iterations=1):
         self.seed_score_pairs = seed_score_pairs
         self.energy = energy
         self.temperature = temperature
@@ -47,12 +47,12 @@ class MutatorSchedule:
             acceptance_probability = math.exp((new_score - current_score) / self.temperature)
 
             # 根据概率决定是否接受新字符串
-            if new_score > current_score or np.random.uniform(low=0, high=1) < acceptance_probability:
+            if new_score >= current_score or np.random.uniform(low=0, high=1) < acceptance_probability:
                 current_op = new_op
                 current_score = new_score
 
             # 更新最佳字符串
-            if current_score > best_score:
+            if current_score >= best_score:
                 best_op = current_op
                 best_score = current_score
 
