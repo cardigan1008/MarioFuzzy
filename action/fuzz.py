@@ -60,7 +60,7 @@ class Fuzz:
             mutation_schedule = MutatorSchedule(selected_tuple, energy)
             output_data, score, is_crash = mutation_schedule.schedule()
 
-            if is_crash:
+            if not is_crash:
                 self.save_crash_data(output_data)
                 continue
             else:

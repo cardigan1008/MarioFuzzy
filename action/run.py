@@ -1,3 +1,4 @@
+import logging
 import subprocess
 import os
 
@@ -78,6 +79,7 @@ def simulate_keypress(key, pygame_process):
 
 
 def play_game(operation_list, energy):
+    logging.info("Start to play game!")
     # 打开 YAML 文件
     with open("action/config.yaml", "r") as file:
         # 使用 PyYAML 加载 YAML 文件的内容
@@ -145,6 +147,7 @@ def play_game(operation_list, energy):
         if i > maxScore:
             maxScore = i
     os.chdir(current_directory)
+    logging.info(f"[Game Result]-is_mario: {retBool}, gold: {maxGold}, score: {maxScore}")
     return retBool, maxGold, maxScore
 
 

@@ -30,7 +30,7 @@ class MutatorSchedule:
         best_op = current_op
         best_score = current_score
 
-        for _ in tqdm(range(self.iterations)):
+        for _ in tqdm(range(self.iterations), "mutator schedule"):
             self.temperature *= self.cooling_rate
 
             # 在当前字符串附近进行变化
