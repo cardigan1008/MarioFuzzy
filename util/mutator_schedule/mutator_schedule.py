@@ -13,7 +13,7 @@ def get_score(seed, energy):
 
 
 class MutatorSchedule:
-    def __init__(self, seed_score_pairs, energy, temperature=1.0, cooling_rate=0.95, iterations=1):
+    def __init__(self, seed_score_pairs, energy, temperature=1.0, cooling_rate=0.95, iterations=10):
         self.seed_score_pairs = seed_score_pairs
         self.energy = energy
         self.temperature = temperature
