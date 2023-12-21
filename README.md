@@ -22,7 +22,7 @@ python main.py fuzz <seed_path> <crash_path>
 
 ## Requirements
 
-Game: [Mario-Level-1](https://github.com/justinmeister/Mario-Level-1)
+Game: [Mario-Level-1](https://github.com/cardigan1008/Mario-Level-1)
 
 Required Packages: Please refer to the `requirements.txt` file for the list of required packages.
 
