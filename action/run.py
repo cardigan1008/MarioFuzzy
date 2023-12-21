@@ -79,7 +79,7 @@ def simulate_keypress(key, pygame_process):
 
 def play_game(operation_list, energy):
     # 打开 YAML 文件
-    with open("config.yaml", "r") as file:
+    with open("action/config.yaml", "r") as file:
         # 使用 PyYAML 加载 YAML 文件的内容
         yaml_data = yaml.safe_load(file)
     game_path = yaml_data["game_path"]
@@ -88,7 +88,7 @@ def play_game(operation_list, energy):
     print(current_directory)
     os.chdir(game_path)
     pygame_process = subprocess.Popen(['python', game_path + '/mario_level_1.py'], stdin=subprocess.PIPE)
-    os.chdir(current_directory + "\\..\\util\\output_analysis")
+    os.chdir(current_directory + "\\util\\output_analysis")
     actions = KeyboardActions()
 
     time.sleep(5)
