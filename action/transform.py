@@ -21,6 +21,7 @@ class Transform:
 
     def transform(self):
         action_kind = random.choice(list(TransformKind))
+        # action_kind = TransformKind.CHAR_INS
         return self.take_action(action_kind)
 
     def take_action(self, transform_kind):
@@ -48,7 +49,7 @@ class Transform:
             start = random.randint(0, len(self.input_data) - K)
             end = start + K
             self.input_data = (
-                    self.input_data[:start] + self.input_data[start:end][::-1] + self.input_data[end:]
+                self.input_data[:start] + self.input_data[start:end][::-1] + self.input_data[end:]
             )
         return cur_data[0:len(self.input_data)]
 

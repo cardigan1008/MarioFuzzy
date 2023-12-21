@@ -86,7 +86,7 @@ class Fuzz:
     def save_crash_data(self, data):
         # 获取当前输出文件的序号，如 seed1.txt、seed2.txt 等
         crash_file_number = len([f for f in os.listdir(self.crash_path) if f.startswith("crash")]) + 1
-        crash_file_name = f"seed{crash_file_number}.txt"
+        crash_file_name = f"crash{crash_file_number}.txt"
 
         # 构建输出文件路径
         crash_file_path = os.path.join(self.crash_path, crash_file_name)
