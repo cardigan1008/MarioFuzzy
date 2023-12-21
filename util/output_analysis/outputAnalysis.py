@@ -93,8 +93,8 @@ class OutputAnalysis:
             for m, n in matches:
                 if m.distance < 0.75 * n.distance:
                     good.append([m])
-            # 若匹配超过3点则认为存在
-            if len(good) > 3:
+            # 若匹配超过0点则认为存在
+            if len(good) > 0:
                 # # 画出匹配结果
                 # img3 = cv2.drawMatchesKnn(train_template[i], train_kp[i], screenshot, kp2, good, None, flags=2)
                 # # 显示图片
@@ -122,8 +122,8 @@ class OutputAnalysis:
             for m, n in matches:
                 if m.distance < 0.75 * n.distance:
                     good.append([m])
-            # 若匹配超过3点则认为存在
-            if len(good) > 3:
+            # 若匹配超过0点则认为存在
+            if len(good) > 0:
                 # # 画出匹配结果
                 # img3 = cv2.drawMatchesKnn(train_template[i], train_kp[i], screenshot, kp2, good, None, flags=2)
                 # # 显示图片
