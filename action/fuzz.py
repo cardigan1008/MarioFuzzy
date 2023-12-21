@@ -45,7 +45,7 @@ class Fuzz:
         file_list = self.get_file_list()
         seed_score_pairs = []
         for i in tqdm(range(len(file_list)), "Loading seeds"):
-            tmp_ops = read_file_content(file_list[i])
+            tmp_ops = read_file_content(self.target_path + file_list[i])
             _, gold, score = run.play_game(tmp_ops, len(tmp_ops))
             seed_score_pairs.append((tmp_ops, score))
 

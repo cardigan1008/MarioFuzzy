@@ -313,7 +313,186 @@ def main():
 
 > output_analysis/
 
-// TODO
+##### NumberTrain
+
+> numberTrain.py
+
+对游戏的数字图像进行训练，通过图像中的数字轮廓，将每个数字提取出来，并将这些数字的分类结果和压平图像分别保存到 classifications.txt 和 flattened_images.txt中。
+
+```python
+    # 遍历所有轮廓
+    for npaContour in npaContours:
+        # 如果轮廓面积大于阈值
+        if cv2.contourArea(npaContour) > MIN_CONTOUR_AREA:
+            [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
+
+            # 在原始图像上绘制红色矩形
+            cv2.rectangle(imgTrainingNumbers, (intX, intY), (intX + intW, intY + intH), (0, 0, 255), 2)
+
+            imgROI = imgThresh[intY:intY + intH, intX:intX + intW]
+            imgROIResized = cv2.resize(imgROI, (RESIZED_IMAGE_WIDTH, RESIZED_IMAGE_HEIGHT))
+
+            # 显示原始字符区域和调整大小后的字符区域
+            cv2.imshow("imgROI", imgROI)
+            cv2.imshow("imgROIResized", imgROIResized)
+            cv2.imshow("training_numbers.png", imgTrainingNumbers)
+
+            # 获取键盘输入
+            intChar = cv2.waitKey(0)
+
+            # 如果按下ESC键，退出程序
+            if intChar == 27:
+                sys.exit()
+            # 如果按下有效字符，添加到分类列表
+            elif intChar in intValidChars:
+                intClassifications.append(intChar)
+
+                # 压平字符区域并添加到数组
+                npaFlattenedImage = imgROIResized.reshape((1, RESIZED_IMAGE_WIDTH * RESIZED_IMAGE_HEIGHT))
+                npaFlattenedImages = np.append(npaFlattenedImages, npaFlattenedImage, 0)
+
+    fltClassifications = np.array(intClassifications, np.float32)
+    npaClassifications = fltClassifications.reshape((fltClassifications.size, 1))
+
+    print("\n训练完成！！\n")
+    np.savetxt("classifications.txt", npaClassifications)
+    np.savetxt("flattened_images.txt", npaFlattenedImages)
+```
+
+##### NumberExtract
+
+> numberExtract.py
+
+通过训练好的KNN模型对输入的数字图像进行识别提取。
+
+```python
+def number_get(test_image):
+  
+    ......
+    
+    # 创建KNN对象
+    kNearest = cv2.ml.KNearest_create()
+
+    # 训练KNN模型
+    kNearest.train(npaFlattenedImages, cv2.ml.ROW_SAMPLE, npaClassifications)
+
+    ......
+    
+    # 最终识别结果字符串
+    strFinalString = ""
+
+    # 遍历有效轮廓
+    for contourWithData in validContoursWithData:
+        # 获取数字区域
+        imgROI = imgThresh[contourWithData.intRectY: contourWithData.intRectY + contourWithData.intRectHeight,
+                 contourWithData.intRectX: contourWithData.intRectX + contourWithData.intRectWidth]
+
+        # 调整数字区域大小
+        imgROIResized = cv2.resize(imgROI, (RESIZED_IMAGE_WIDTH, RESIZED_IMAGE_HEIGHT))
+
+        # 将数字区域展平为一维numpy数组
+        npaROIResized = imgROIResized.reshape((1, RESIZED_IMAGE_WIDTH * RESIZED_IMAGE_HEIGHT))
+
+        # 将数据类型转换为float32
+        npaROIResized = np.float32(npaROIResized)
+
+        # 使用KNN进行识别
+        retval, npaResults, neigh_resp, dists = kNearest.findNearest(npaROIResized, k=1)
+
+        # 获取识别结果字符
+        strCurrentChar = str(chr(int(npaResults[0][0])))
+        strFinalString = strFinalString + strCurrentChar
+    return strFinalString
+```
+
+##### OutputAnalysis
+
+> outputAnalysis.py
+
+提取mario图像的特征点，将特征点保存在train_des.pkl
+
+```python
+def extract_mario_des(self):
+    template_image_path = '../preprocess/mario/small_normal/right_small_normal_0.png'
+    arr_des = []
+    arr_kp = []
+    arr_template = []
+    # 遍历文件
+    PATH_TO_TEST_IMAGES_DIR = '../preprocess/mario'
+    for pidImage in glob.glob(PATH_TO_TEST_IMAGES_DIR + "/*/*.png"):
+        template_image_path = pidImage
+        template_image_path = template_image_path.replace('\\', '/')
+        # print(template_image_path)
+
+        # 读取mario和背景
+        template = cv2.imread(template_image_path, 0)
+        if template is None:
+            print('Could not open or find the images!')
+            exit(0)
+        template = cv2.resize(template, None, fx=2, fy=2)
+        # 创建SIFT对象
+        sift = cv2.xfeatures2d.SIFT_create()
+        # 提取特征点
+        kp1, des1 = sift.detectAndCompute(template, None)
+        arr_des.append(des1)
+        arr_kp.append(kp1)
+        arr_template.append(template)
+    save_data('train_des.pkl', arr_des)
+    return arr_des, arr_kp, arr_template
+```
+
+提取游戏窗口截图的特征点，与已提取的mario特征点进行匹配，返回输入图像中是否包含mario
+```python
+def check_image(self, screenshot):
+    train_des = load_des('train_des.pkl')
+    if screenshot is None:
+        print('Could not open or find the images!')
+        exit(0)
+    # 创建SIFT对象
+    sift = cv2.SIFT_create()
+    # 提取特征点
+    kp2, des2 = sift.detectAndCompute(screenshot, None)
+    bf = cv2.BFMatcher()
+    for i in range(len(train_des)):
+        # 匹配特征点
+        matches = bf.knnMatch(train_des[i], des2, k=2)
+        good = []
+        for m, n in matches:
+            if m.distance < 0.75 * n.distance:
+                good.append([m])
+        # 若匹配超过3点则认为存在
+        if len(good) > 3:
+            return True
+    return False
+```
+
+提取游戏窗口截图中的游戏分数
+
+```python
+def extract_score(self, screen):
+    imgROI = screen[165:219, 140:429]
+    # cv2.imshow("ROI_WIN", imgROI)
+    # cv2.waitKey(0)
+    res = number_get(imgROI)
+    if len(res) > 6:
+        res = res[0:6]
+    # print("score:"+res)
+    return res
+```
+
+提取游戏窗口截图中的金币数
+
+```python
+def extract_gold(self, screen):
+    imgROI = screen[165:219, 635:730]
+    # cv2.imshow("ROI_WIN", imgROI)
+    # cv2.waitKey(0)
+    res = number_get(imgROI)
+    if len(res) > 2:
+        res = res[0:2]
+    # print("gold:"+res)
+    return res
+```
 
 #### Mutator Scheduler
 

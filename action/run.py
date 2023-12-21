@@ -144,10 +144,10 @@ def play_game(operation_list, energy):
     for i in scores:
         if i > maxScore:
             maxScore = i
-    print(retBool, maxGold, maxScore)
+    os.chdir(current_directory)
     return retBool, maxGold, maxScore
 
 
 if __name__ == "__main__":
     time.sleep(1)
-    play_game("llrraa")
+    play_game("llrraa",6)
