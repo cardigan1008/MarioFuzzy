@@ -127,7 +127,7 @@ def play_game(operation_list, energy):
             score = "00000"
         boolValues.append(boolValue)
         golds.append(int(gold))
-        scores.append(int(score[-4:-1]))
+        scores.append(int(score[-4:]))
         counter = counter + 1
         time.sleep(1)  # 可以根据需要调整截图的时间间隔
 
