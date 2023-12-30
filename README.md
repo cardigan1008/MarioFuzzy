@@ -320,43 +320,43 @@ def main():
 对游戏的数字图像进行训练，通过图像中的数字轮廓，将每个数字提取出来，并将这些数字的分类结果和压平图像分别保存到 classifications.txt 和 flattened_images.txt中。
 
 ```python
-    # 遍历所有轮廓
-    for npaContour in npaContours:
-        # 如果轮廓面积大于阈值
-        if cv2.contourArea(npaContour) > MIN_CONTOUR_AREA:
-            [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
+ # 遍历所有轮廓
+ for npaContour in npaContours:
+     # 如果轮廓面积大于阈值
+     if cv2.contourArea(npaContour) > MIN_CONTOUR_AREA:
+         [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
 
-            # 在原始图像上绘制红色矩形
-            cv2.rectangle(imgTrainingNumbers, (intX, intY), (intX + intW, intY + intH), (0, 0, 255), 2)
+         # 在原始图像上绘制红色矩形
+         cv2.rectangle(imgTrainingNumbers, (intX, intY), (intX + intW, intY + intH), (0, 0, 255), 2)
 
-            imgROI = imgThresh[intY:intY + intH, intX:intX + intW]
-            imgROIResized = cv2.resize(imgROI, (RESIZED_IMAGE_WIDTH, RESIZED_IMAGE_HEIGHT))
+         imgROI = imgThresh[intY:intY + intH, intX:intX + intW]
+         imgROIResized = cv2.resize(imgROI, (RESIZED_IMAGE_WIDTH, RESIZED_IMAGE_HEIGHT))
 
-            # 显示原始字符区域和调整大小后的字符区域
-            cv2.imshow("imgROI", imgROI)
-            cv2.imshow("imgROIResized", imgROIResized)
-            cv2.imshow("training_numbers.png", imgTrainingNumbers)
+         # 显示原始字符区域和调整大小后的字符区域
+         cv2.imshow("imgROI", imgROI)
+         cv2.imshow("imgROIResized", imgROIResized)
+         cv2.imshow("training_numbers.png", imgTrainingNumbers)
 
-            # 获取键盘输入
-            intChar = cv2.waitKey(0)
+         # 获取键盘输入
+         intChar = cv2.waitKey(0)
 
-            # 如果按下ESC键，退出程序
-            if intChar == 27:
-                sys.exit()
-            # 如果按下有效字符，添加到分类列表
-            elif intChar in intValidChars:
-                intClassifications.append(intChar)
+         # 如果按下ESC键，退出程序
+         if intChar == 27:
+             sys.exit()
+         # 如果按下有效字符，添加到分类列表
+         elif intChar in intValidChars:
+             intClassifications.append(intChar)
 
-                # 压平字符区域并添加到数组
-                npaFlattenedImage = imgROIResized.reshape((1, RESIZED_IMAGE_WIDTH * RESIZED_IMAGE_HEIGHT))
-                npaFlattenedImages = np.append(npaFlattenedImages, npaFlattenedImage, 0)
+             # 压平字符区域并添加到数组
+             npaFlattenedImage = imgROIResized.reshape((1, RESIZED_IMAGE_WIDTH * RESIZED_IMAGE_HEIGHT))
+             npaFlattenedImages = np.append(npaFlattenedImages, npaFlattenedImage, 0)
 
-    fltClassifications = np.array(intClassifications, np.float32)
-    npaClassifications = fltClassifications.reshape((fltClassifications.size, 1))
+ fltClassifications = np.array(intClassifications, np.float32)
+ npaClassifications = fltClassifications.reshape((fltClassifications.size, 1))
 
-    print("\n训练完成！！\n")
-    np.savetxt("classifications.txt", npaClassifications)
-    np.savetxt("flattened_images.txt", npaFlattenedImages)
+ print("\n训练完成！！\n")
+ np.savetxt("classifications.txt", npaClassifications)
+ np.savetxt("flattened_images.txt", npaFlattenedImages)
 ```
 
 ##### NumberExtract
