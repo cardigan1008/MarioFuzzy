@@ -567,3 +567,5 @@ def select_tuples(sorted_tuples, high_ratio):
     return selected_tuple
 ```
 
+## 结果分析
+应用六种变异算子，生成53个种子，详细可见product/seed
